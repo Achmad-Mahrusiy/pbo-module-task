@@ -1,0 +1,241 @@
+
+class Produk
+{
+    public string nama { get; set; }
+    public double harga { get; set; }
+
+    public Produk(string nama, double harga)
+    {
+        this.nama = nama;
+        this.harga = harga;
+    }
+
+    public virtual void InfoProduk()
+    {
+        Console.WriteLine($"Nama Produk : {nama}");
+        Console.WriteLine($"Harga       : Rp {harga:N0}");
+    }
+
+    public virtual void Kategori()
+    {
+        Console.WriteLine($"Kategori    : Produk Umum");
+    }
+}
+
+class Elektronik : Produk
+{
+    public int garansi { get; set; }
+
+    public Elektronik(string nama, double harga, int garansi)
+        : base(nama, harga)
+    {
+        this.garansi = garansi;
+    }
+
+    public void CekGaransi()
+    {
+        Console.WriteLine($"Garansi     : {garansi} bulan");
+    }
+
+    public override void Kategori()
+    {
+        Console.WriteLine($"Kategori    : Elektronik");
+    }
+
+    public override void InfoProduk()
+    {
+        base.InfoProduk();
+        CekGaransi();
+    }
+}
+
+class Makanan : Produk
+{
+    public DateTime tanggalKadaluarsa { get; set; }
+
+    public Makanan(string nama, double harga, DateTime tanggalKadaluarsa)
+        : base(nama, harga)
+    {
+        this.tanggalKadaluarsa = tanggalKadaluarsa;
+    }
+
+    public void CekKadaluarsa()
+    {
+        if (DateTime.Now > tanggalKadaluarsa)
+        {
+            Console.WriteLine($"Status      : KADALUARSA (expired {tanggalKadaluarsa:dd-MM-yyyy})");
+        }
+        else
+        {
+            Console.WriteLine($"Kadaluarsa  : {tanggalKadaluarsa:dd-MM-yyyy} (masih aman)");
+        }
+    }
+
+    public override void Kategori()
+    {
+        Console.WriteLine($"Kategori    : Makanan");
+    }
+
+    public override void InfoProduk()
+    {
+        base.InfoProduk();
+        CekKadaluarsa();
+    }
+}
+
+class Laptop : Elektronik
+{
+
+    public Laptop(string nama, double harga, int garansi)
+        : base(nama, harga, garansi)
+    {
+    }
+
+    public void InstallSoftware()
+    {
+        Console.WriteLine($"Menginstall software pada Laptop {nama}...");
+        Console.WriteLine("Software berhasil diinstall!");
+    }
+    public override void Kategori()
+    {
+        Console.WriteLine($"Kategori    : Elektronik > Laptop");
+    }
+}
+
+class HP : Elektronik
+{
+    public HP(string nama, double harga, int garansi)
+        : base(nama, harga, garansi)
+    {
+    }
+
+    public void Telepon()
+    {
+        Console.WriteLine($"Menelepon menggunakan HP {nama}...");
+        Console.WriteLine("Panggilan berhasil tersambung!");
+    }
+
+    public override void Kategori()
+    {
+        Console.WriteLine($"Kategori    : Elektronik > HP");
+    }
+}
+
+class Snack : Makanan
+{
+    public Snack(string nama, double harga, DateTime tanggalKadaluarsa)
+        : base(nama, harga, tanggalKadaluarsa)
+    {
+    }
+
+    public void Makan()
+    {
+        Console.WriteLine($"Sedang makan {nama}... Yummy!");
+    }
+
+    public override void Kategori()
+    {
+        Console.WriteLine($"Kategori    : Makanan > Snack");
+    }
+}
+
+class Minuman : Makanan
+{
+    public Minuman(string nama, double harga, DateTime tanggalKadaluarsa)
+        : base(nama, harga, tanggalKadaluarsa)
+    {
+    }
+
+    public void Dinginkan()
+    {
+        Console.WriteLine($"Mendinginkan {nama} di kulkas...");
+        Console.WriteLine($"{nama} sudah dingin, siap diminum!");
+    }
+
+    public override void Kategori()
+    {
+        Console.WriteLine($"Kategori    : Makanan > Minuman");
+    }
+}
+
+class Toko
+{
+    private List<Produk> daftarProduk = new List<Produk>();
+
+    public void TambahProduk(Produk produk)
+    {
+        daftarProduk.Add(produk);
+        Console.WriteLine($"Produk '{produk.nama}' berhasil ditambahkan ke toko.");
+    }
+
+    public void DaftarProduk()
+    {
+        Console.WriteLine("\n========================================");
+        Console.WriteLine("         DAFTAR PRODUK TOKO             ");
+        Console.WriteLine("========================================");
+
+        if (daftarProduk.Count == 0)
+        {
+            Console.WriteLine("Toko masih kosong.");
+            return;
+        }
+
+        int no = 1;
+        foreach (Produk p in daftarProduk)
+        {
+            Console.WriteLine($"\n[Produk #{no}]");
+            p.InfoProduk();
+            p.Kategori();
+            no++;
+        }
+
+        Console.WriteLine("\n========================================");
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        Console.WriteLine("===== SISTEM PRODUK TOKO =====\n");
+
+        Toko toko = new Toko();
+
+        Laptop laptop = new Laptop("ASUS VivoBook", 8500000, 24);
+        HP hp = new HP("Samsung Galaxy A55", 4200000, 12);
+        Snack snack = new Snack("Chitato BBQ", 15000, new DateTime(2025, 12, 31));
+        Minuman minuman = new Minuman("Teh Botol Sosro", 5000, new DateTime(2026, 6, 30));
+
+        Console.WriteLine("--- Menambah Produk ---");
+        toko.TambahProduk(laptop);
+        toko.TambahProduk(hp);
+        toko.TambahProduk(snack);
+        toko.TambahProduk(minuman);
+
+        toko.DaftarProduk();
+
+        Console.WriteLine("\n===== SOAL 1: Kategori() =====");
+        laptop.Kategori();
+        snack.Kategori();
+
+        Console.WriteLine("\n===== SOAL 2: InstallSoftware() =====");
+        laptop.InstallSoftware();
+
+        Console.WriteLine("\n===== SOAL 3: Info Lengkap Laptop =====");
+        laptop.InfoProduk();
+
+        Console.WriteLine("\n===== Method Khusus: Telepon() dan Makan() =====");
+        hp.Telepon();
+        snack.Makan();
+
+        Console.WriteLine("\n===== SOAL 4: Dinginkan() =====");
+        minuman.Dinginkan();
+
+        Console.WriteLine("\n===== SOAL 5: Polymorphism dengan variabel Produk =====");
+        Produk produkBaru = hp;
+        produkBaru.Kategori();
+
+
+        Console.WriteLine("\n===== Selesai =====");
+    }
+}
